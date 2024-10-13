@@ -1,8 +1,7 @@
 ﻿# Management Studio
 
 ## Description
-Management Studio is a project designed for managing databases. This application is developed using ADO.NET, allowing users to select options and generate SQL queries as needed.
-
+Management Studio is a project designed for managing databases. This application is developed using ADO.NET, allowing users to select options, and the program automatically generates and executes SQL queries.
 ## Requirements
 - .NET 8 or higher
 
