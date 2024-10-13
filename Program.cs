@@ -1,7 +1,4 @@
 ﻿using Mavzu.Ado_net.Ado_net_Servis;
-using Npgsql;
-using System.Collections.Generic;
-using System.Data;
 
 namespace Mavzu
 {
@@ -9,251 +6,244 @@ namespace Mavzu
     {
         public static string ConnectionString { get; set; }
 
-        public static List<string> ArrowTableName { get; set; }
-
-        public static string DataBaseMavjudmi____ { get; set; }
-
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            menyu:
-            Console.Write("Server [localhost]:");
-            string loca = Console.ReadLine();
-            Console.Write("Database [postgres]:");
-            string data = Console.ReadLine();
-            DataBaseMavjudmi____ = data;
-            Console.Write("Port [5432]:");
-            string port = Console.ReadLine();
-            Console.Write("Username [postgres]:");
-            string user = Console.ReadLine();
-            Console.Write("Password:");
-            string password = Console.ReadLine();
-            if (string.IsNullOrEmpty(loca)) loca = "localhost";
-            if (string.IsNullOrEmpty(data)) DataBaseMavjudmi____ = "postgres";
-            if (string.IsNullOrEmpty(port)) port = "5432";
-            if (string.IsNullOrEmpty(user)) user = "postgres";
+            DataBaseService serves = new DataBaseService();
+            ConnectionString = await serves.OpenConnectionStringAsync();
 
-            DataBase_sevis serves = new DataBase_sevis();
+            //har doim typelarni nomini yozish orqali tez ishlatish yaxshiroq;
+            //Procedure,Function
 
-            string ConnDEFAULT = "postgres";
-            string NEwConnectionString = $"Host={loca};Database={ConnDEFAULT};Port={port};Username={user};Password={password};";
-
-            string MAvjudmi = serves.OpenConnectionString(NEwConnectionString, DataBaseMavjudmi____);
-            
-            
-            
-
-
-            ConnectionString = $"Host={loca};Database={MAvjudmi};Port={port};Username={user};Password={password};";
-
-
-
-            int intD;
-            List<string> DataBaseName = serves.List_DataBase();
-
-            int intT;
-            List<string> TableName = serves.List_Table();
-
-            int intC;
-            List<string> ColumnName;// = serves.List_Column();
-
-
-
-
-
-            //*******************************************************************
-
-
-
-            //DataBase Add  Create  ->> Database bo'lmasa Create qilish kerak,Create bildirish kerak.......
-            //************************************
-            //Databases     //CRUD
-            //Tables       //CRUD
-            //Columns     //DataTypes    //CRUD  // insert into
-            //Users list
-            //List_TAble_ROW
-            //Database change
-            //------//Host change
-            //back
-            //ipconfig ---ip_adress
-
-            //*******************************************************************
-
-
-
-            try
+            var Menyu = new List<string>()
             {
-                var Menyu = new List<string>()
+                "Databases",
+                "Tables",
+                "Columns",
+                "List DataBase > Table > Column > Row",
+                "Search",
+                "Value input",
+                "Users List",
+                "Write a query"
+            };
+            var Databases = new List<string>()
+            {
+                "Add Databases",
+                "List Databases AND DataBase Change",
+                "Update Databases",
+                "Delete Databases",
+            };
+            var Tables = new List<string>()
+            {
+                "Add Table",
+                "List Table",
+                "Update Table",
+                "Delete Table",
+            };
+            var Columns = new List<string>()
+            {
+                "Add Column",
+                "List Column",
+                "Update Column",
+                "Delete Column",
+            };
+            var WriteQuery = new List<string>()
+            {
+                "Change query",
+                "Select query"
+            };
+            bool continueProgram = true;
+            while (continueProgram)
+            {
+                try
                 {
-                    "Databases",
-                    "Tables",
-                    "Columns",
-                    "List_DataBase_Table_Column_Row",
-                    "Users_List",
-                    "exit"
-                };
-                var Databases = new List<string>()
+                    var (index, name, maxList) = ArrowIndex(Menyu);
+                    switch (index)
+                    {
+                        case 0:
+                            bool DatabasesMenyu = true;
+                            while (DatabasesMenyu)
+                            {
+                                (index, _, _) = ArrowIndex(Databases);
+                                switch (index)
+                                {
+                                    case 0:
+                                        await serves.CreateDatabaseAsync();
+                                        Console.ReadKey();
+                                        continue;
+                                    case 1:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListDataBaseAsync());
+                                        if (index == maxList) continue;
+                                        serves.ChangeDataBase(name);
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        await serves.ViewListColumnAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 2:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListDataBaseAsync());
+                                        if (index == maxList) continue;
+                                        await serves.UpdateDataBaseAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 3:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListDataBaseAsync());
+                                        if (index == maxList) continue;
+                                        await serves.DeleteDataBaseAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    default:
+                                        DatabasesMenyu = false;
+                                        continue;
+                                }
+                            }
+                            continue;
+                        case 1:
+                            bool TableMenyu = true;
+                            while (TableMenyu)
+                            {
+                                (index, name, maxList) = ArrowIndex(Tables);
+                                switch (index)
+                                {
+                                    case 0:
+                                        string TableName = await serves.CreateTableAsync();
+                                        await serves.CreateColumnAsync(TableName);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 1:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        await serves.ViewListColumnAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 2:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        await serves.UpdateTableAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 3:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        await serves.DeleteTableAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    default:
+                                        TableMenyu = false;
+                                        continue;
+                                }
+                            }
+                            continue;
+                        case 2:
+                            bool ColumnMenyu = true;
+                            while (ColumnMenyu)
+                            {
+                                (index, _, _) = ArrowIndex(Columns);
+                                switch (index)
+                                {
+                                    case 0:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        await serves.CreateColumnAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 1:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        await serves.ViewListColumnAsync(name);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 2:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        var (indexColumn, nameColumn, maxListColumn) = ArrowIndex((await serves.ListColumnAsync(name)).Select(item => item.Item1).ToList());
+                                        if (indexColumn == maxListColumn) continue;
+                                        await serves.UpdateColumnAsync(name, nameColumn);
+                                        Console.ReadKey();
+                                        continue;
+                                    case 3:
+                                        (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                        if (index == maxList) continue;
+                                        (indexColumn, nameColumn, maxListColumn) = ArrowIndex((await serves.ListColumnAsync(name)).Select(item => item.Item1).ToList());
+                                        if (indexColumn == maxListColumn) continue;
+                                        await serves.DeleteColumnAsync(name, nameColumn);
+                                        Console.ReadKey();
+                                        continue;
+                                    default:
+                                        ColumnMenyu = false;
+                                        continue;
+                                }
+                            }
+                            continue;
+                        case 3:
+                            bool GetRowsMenyu = true;
+                            while (GetRowsMenyu)
+                            {
+                                (index, name, maxList) = ArrowIndex(await serves.ListDataBaseAsync());
+                                if (index == maxList)
+                                {
+                                    GetRowsMenyu = false;
+                                    continue;
+                                }
+                                serves.ChangeDataBase(name);
+                                (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                                if (index == maxList) continue;
+                                await serves.GetRowsAsync(name);
+                                Console.ReadKey();
+                                GetRowsMenyu = false;
+                                continue;
+                            }
+                            continue;
+                        case 4:
+                            (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                            if (index == maxList) continue;
+                            var (indexColumnNew, nameColumnNew, maxListColumnNew) = ArrowIndex((await serves.ListColumnAsync(name)).Select(item => item.Item1).ToList());
+                            if (indexColumnNew == maxListColumnNew) continue;
+                            await serves.SearchAsyn(name, nameColumnNew);
+                            continue;
+                        case 5:
+                            (index, name, maxList) = ArrowIndex(await serves.ListTableAsync());
+                            if (index == maxList) continue;
+                            await serves.ValueInputAsync(name);
+                            Console.ReadKey();
+                            continue;
+                        case 6:
+                            await serves.ListUsersAsync();
+                            Console.ReadKey();
+                            continue;
+                        case 7:
+                            bool QueryMenyu = true;
+                            while (QueryMenyu)
+                            {
+                                (index, name, maxList) = ArrowIndex(WriteQuery);
+                                switch (index)
+                                {
+                                    case 0:
+                                        await serves.WriteChangeQueryAsync();
+                                        Console.ReadKey();
+                                        continue;
+                                    case 1:
+                                        await serves.WriteSelectQueryAsync();
+                                        Console.ReadKey();
+                                        continue;
+                                    default:
+                                        QueryMenyu = false;
+                                        continue;
+                                }
+                            }
+                            continue;
+                        case 8:
+                            return;
+                    }
+                }
+                catch (Exception ex)
                 {
-                    "Add Databases",
-                    "List Databases AND DataBase Change",
-                    "Update Databases",
-                    "Delete Databases",
-                    "Back"
-                };
-                var Tables = new List<string>()
-                {
-                    "Add Table",
-                    "List Table",
-                    "Update Table",
-                    "Delete Table",
-                    "Back"
-                };
-                var Columns = new List<string>()
-                {
-                    "Add Column",
-                    "List Column",
-                    "Update Column",
-                    "Delete Column",
-                    "Back"
-                };
-
-
-
-            back:
-                int num = ArrowIndex(Menyu);
-                switch (num)
-                {
-                    case 0:
-                    cate:
-                        num = ArrowIndex(Databases);
-                        switch (num)
-                        {
-                            case 0:
-                                serves.Create_Database();
-                                DataBaseName=serves.List_DataBase();
-                                Console.ReadKey();
-                                goto cate;
-                            case 1:
-                                intD = ArrowIndex(DataBaseName);
-                                ConnectionString = $"Host={loca};Database={DataBaseName[intD]};Port={port};Username={user};Password={password};";
-                                TableName = serves.List_Table();
-
-                                intT = ArrowIndex(TableName);
-                                serves.SelectC(TableName[intT]);
-
-                                Console.ReadKey();
-                                goto cate;
-                            case 2:
-
-                                DataBaseName = serves.List_DataBase();
-                                intD = ArrowIndex(serves.List_DataBase());
-                                serves.Update_DataBase(DataBaseName[intD]);
-                                DataBaseName= serves.List_DataBase();
-                                Console.ReadKey();
-                                goto cate;
-                            case 3:
-                                intD = ArrowIndex(serves.List_DataBase());
-                                serves.Delete_DataBase(DataBaseName[intD]);
-                                DataBaseName= serves.List_DataBase();
-                                Console.ReadKey();
-                                goto cate;
-                            case 4:
-                                goto back;
-                        }
-                        break;
-                    case 1:
-                    pro:
-                        num = ArrowIndex(Tables);
-                        switch (num)
-                        {
-                            case 0:
-                                serves.Create_Table();
-                                TableName= serves.List_Table();
-                                Console.ReadKey();
-                                goto pro;
-                            case 1:
-                                TableName= serves.List_Table();
-                                intT= ArrowIndex(TableName);
-                                serves.List_Column(TableName[intT]);
-                                Console.ReadKey();
-                                goto pro;
-                            case 2:
-                                TableName = serves.List_Table();
-                                intT = ArrowIndex(serves.List_Table());
-                                serves.Update_Table(TableName[intT]);
-                                TableName= serves.List_Table();
-                                Console.ReadKey();
-                                goto pro;
-                            case 3:
-                                intT = ArrowIndex(serves.List_Table());
-                                serves.Delete_Table(TableName[intT]);
-                                TableName = serves.List_Table();
-                                Console.ReadKey();
-                                goto pro;
-                            case 4:
-                                goto back;
-                        }
-                        break;
-
-                    case 2:
-                    colu:
-                        num = ArrowIndex(Columns);
-                        switch (num)
-                        {
-                            case 0:
-                                intT = ArrowIndex(serves.List_Table());
-                                serves.Create_Column(TableName[intT]);
-                                Console.ReadKey();
-                                goto colu;
-                            case 1:
-                                intT = ArrowIndex(serves.List_Table());
-                                serves.List_Column(TableName[intT]);
-                                Console.ReadKey();
-                                goto colu;
-                            case 2:
-                                intT = ArrowIndex(serves.List_Table());
-                                ColumnName = serves.List_Column(TableName[intT]);
-                                intC = ArrowIndex(serves.List_Column(TableName[intT]));
-                                serves.Update_Column(TableName[intT], ColumnName[intC]);
-                                Console.ReadKey();
-                                goto colu;
-                            case 3:
-                                intT = ArrowIndex(serves.List_Table());
-                                ColumnName = serves.List_Column(TableName[intT]);
-                                intC = ArrowIndex(serves.List_Column(TableName[intT]));
-                                serves.Delete_Column(TableName[intT], ColumnName[intC]);
-                                Console.ReadKey();
-                                goto colu;
-                            case 4:
-                                goto back;
-                        }
-                        break;
-
-                    case 3:
-                        //list table row
-                        DataBaseName=serves.List_DataBase();
-                         intD = ArrowIndex(DataBaseName);
-                        ConnectionString = $"Host={loca};Database={DataBaseName[intD]};Port={port};Username={user};Password={password};";
-                        TableName = serves.List_Table();
-                        intT = ArrowIndex(serves.List_Table());
-                        serves.SelectC(TableName[intT]);
-                        Console.ReadKey();
-                        goto back;
-                    case 4:
-                        //user_list
-                        serves.List_Users();
-                        Console.ReadKey();
-                        goto back;
-                    case 5:
-                        return;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.Message + "   <--  Program.cs error!!!!");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.ReadKey();
+                    continue;
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine( "DataBase Mavjud emas yoki Password noto'g'ri!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                Console.ReadKey();
-                goto menyu;
-            }
-
             #region AddJsonFile
 
             //ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -264,29 +254,59 @@ namespace Mavzu
             ////localhost -> ::1
             //ConnectionString = configs.GetConnectionString("MYDB1");
             #endregion
-
         }
 
 
-
-        
-        public static int ArrowIndex(List<string> buyruq)
+        public static (int index, string name, int maxList) ArrowIndex(List<string> buyruq)
         {
             int selectIndex = 0;
+            buyruq.Add("<--Back");
             while (true)
             {
                 Console.Clear();
                 for (int i = 0; i < buyruq.Count; i++)
                 {
                     if (i == selectIndex) Console.WriteLine($">>>>  {buyruq[i]}");
+                    else if (i == buyruq.Count - 1)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"      {buyruq[i]}");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
                     else Console.WriteLine($"      {buyruq[i]}");
                 }
                 ConsoleKeyInfo key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.DownArrow) selectIndex = (selectIndex + 1) % buyruq.Count;
                 else if (key.Key == ConsoleKey.UpArrow) selectIndex = (selectIndex - 1 + buyruq.Count) % buyruq.Count;
-                else if (key.Key == ConsoleKey.Enter) return selectIndex;
+                else if (key.Key == ConsoleKey.Enter)
+                {
+                    buyruq.RemoveAt(buyruq.Count - 1);
+                    if (selectIndex == buyruq.Count) return (selectIndex, null, buyruq.Count);
+                    return (selectIndex, buyruq[selectIndex], buyruq.Count);
+                }
             }
+        }
+
+        public static string ReadPassword()
+        {
+            string password = string.Empty;
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey(true);
+                if (key.Key != ConsoleKey.Enter && key.Key != ConsoleKey.Backspace)
+                {
+                    password += key.KeyChar;
+                    Console.Write("*");
+                }
+                else if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+                {
+                    password = password.Substring(0, password.Length - 1);
+                    Console.Write("\b \b");
+                }
+            }
+            while (key.Key != ConsoleKey.Enter);
+            return password;
         }
     }
 }
-
