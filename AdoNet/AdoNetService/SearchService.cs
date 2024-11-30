@@ -119,6 +119,8 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                             }
                             await result.CloseAsync();
                         }
+                        Console.WriteLine("\n\n");
+                        Console.Write("Total: " + TotalRows + "\t\t\t\t\t\t\t\t" + (int)Math.Ceiling((double)offset / limit) + "/" + TotalRows / limit);
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"\n\n\n\t\t\t\t\t\t\t\tback page <<-- LeftArrow\t||\tRightArrow-- >> next page");
                         Console.ForegroundColor = ConsoleColor.Gray;
