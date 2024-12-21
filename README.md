@@ -1,6 +1,6 @@
 Management Studio
 Description
-Management Studio is a project designed for managing databases. This application is developed using ADO.NET, allowing users to select options, and the program automatically generates and executes SQL queries.
+Management Studio is a project designed for managing PostgreSQL databases. This application is developed using ADO.NET, allowing users to select options, and based on your selected options, the program executes the corresponding PostgreSQL queries. The project is built using Asynchronous Programming (Async).
 
 Requirements
 .NET 8 or higher

@@ -67,6 +67,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                     await connection.OpenAsync();
                     List<string> list = new List<string>();
                     DataTable catalogs = await connection.GetSchemaAsync("Databases");
+
                     foreach (DataRow row in catalogs.Rows)
                     {
                         list.Add($"{row["Database_Name"]}");
@@ -95,11 +96,13 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                     string NewDataBaseName = "";
                     Console.Write("DataBase New Name: ");
                     NewDataBaseName = Console.ReadLine();
+
                     while (string.IsNullOrEmpty(NewDataBaseName))
                     {
                         Console.WriteLine("Not Entered!!! ");
                         NewDataBaseName = Console.ReadLine();
                     }
+
                     string query = $"ALTER DATABASE \"{DataBaseName}\" RENAME TO \"{NewDataBaseName}\";";
                     using (NpgsqlCommand command = connection.CreateCommand())
                     {

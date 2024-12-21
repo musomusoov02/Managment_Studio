@@ -12,6 +12,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                 using (var connection = new NpgsqlConnection(Program.ConnectionString))
                 {
                     await connection.OpenAsync();
+
                     DataTable users = await connection.GetSchemaAsync("Users");
                     foreach (DataRow row in users.Rows)
                     {

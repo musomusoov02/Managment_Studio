@@ -11,6 +11,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                 List<(string, string)> listColumn = await ListColumnAsync(TableName);
                 int columnCount = listColumn.Count;
                 string ColumnName = string.Empty;
+
                 for (int i = 0; i < columnCount; i++)
                 {
                     ColumnName += "\"";

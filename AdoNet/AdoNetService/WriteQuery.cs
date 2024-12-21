@@ -14,59 +14,52 @@ namespace Mavzu.Ado_net.Ado_net_Servis
 
                     Console.Write("Query input: ");
                     string query = Console.ReadLine();
+
                     while (string.IsNullOrEmpty(query))
                     {
                         Console.WriteLine("Not Entered!!! ");
                         query = Console.ReadLine();
                     }
+
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = query;
                         var result = await command.ExecuteReaderAsync();
 
-                        int ColumnCount = result.FieldCount;
+                        int ColumnCount = result.FieldCount;//      <<<<< ---------
                         var LongestRow = new int[ColumnCount];
+
                         while (await result.ReadAsync())
                         {
                             for (int i = 0; i < ColumnCount; i++)
                             {
-                                int currentLength = result[i].ToString().Length;
-                                if (currentLength > LongestRow[i]) LongestRow[i] = currentLength;
+                                LongestRow[i] = Math.Max(LongestRow[i], result[i].ToString().Length);
                             }
                         }
-
-                        var ColumnsName = new string[ColumnCount];
                         var Longest = new int[ColumnCount];
+
+                        Console.WriteLine();
                         for (int i = 0; i < ColumnCount; i++)
                         {
-                            ColumnsName[i] = result.GetName(i);
-                            Longest[i] = LongestRow[i] > ColumnsName[i].Length ? LongestRow[i] : ColumnsName[i].Length;
+                            Longest[i] = Math.Max(LongestRow[i], result.GetName(i).Length);
+                            Console.Write($" {result.GetName(i).PadRight(Longest[i])} |");
                         }
+
+                        Console.WriteLine();
+                        for (int i = 0; i < ColumnCount; i++)
+                        {
+                            Console.Write($" {"-".PadRight(Longest[i], '-')} +");
+                        }
+
                         await result.CloseAsync();
                         result = await command.ExecuteReaderAsync();
 
                         Console.WriteLine();
-                        for (int i = 0; i < ColumnCount; i++)
-                        {
-                            string SeparatingTheColumnWithLine = ColumnsName[i].ToString();
-                            Console.Write($" {SeparatingTheColumnWithLine.PadRight(Longest[i])} |");
-                        }
-
-                        var Num = new int[ColumnCount];
-                        string Lines = "-";
-                        Console.WriteLine();
-                        for (int i = 0; i < ColumnCount; i++)
-                        {
-                            Num[i] += Longest[i];
-                            Console.Write($" {Lines.PadRight(Num[i], '-')} +");
-                        }
-                        Console.WriteLine();
                         while (await result.ReadAsync())
                         {
                             for (int i = 0; i < ColumnCount; i++)
                             {
-                                string SeparatingTheRowWithLine = result[i].ToString();
-                                Console.Write($" {SeparatingTheRowWithLine.PadRight(Longest[i])} |");
+                                Console.Write($" {result[i].ToString().PadRight(Longest[i])} |");
                             }
                             Console.WriteLine();
                         }

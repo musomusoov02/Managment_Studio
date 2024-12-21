@@ -67,6 +67,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                     string ColumnName = "";
                     Console.Write("Column Name: ");
                     ColumnName = Console.ReadLine();
+
                     while (string.IsNullOrEmpty(ColumnName))
                     {
                         Console.WriteLine("Not Entered!!! ");

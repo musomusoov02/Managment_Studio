@@ -25,6 +25,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                     int limit = 10;
                     int offset = 0;
                     bool exit = true;
+
                     while (exit)
                     {
                         Console.Clear();
@@ -36,47 +37,38 @@ namespace Mavzu.Ado_net.Ado_net_Servis
 
                             int ColumnCount = result.FieldCount;//      <<<<< ---------
                             var LongestRow = new int[ColumnCount];
+
                             while (await result.ReadAsync())
                             {
                                 for (int i = 0; i < ColumnCount; i++)
                                 {
-                                    int currentLength = result[i].ToString().Length;
-                                    if (currentLength > LongestRow[i]) LongestRow[i] = currentLength;
+                                    LongestRow[i] = Math.Max(LongestRow[i], result[i].ToString().Length);
                                 }
                             }
-
-                            var ColumnsName = new string[ColumnCount];
                             var Longest = new int[ColumnCount];
+
+                            Console.WriteLine();
                             for (int i = 0; i < ColumnCount; i++)
                             {
-                                ColumnsName[i] = result.GetName(i);
-                                Longest[i] = LongestRow[i] > ColumnsName[i].Length ? LongestRow[i] : ColumnsName[i].Length;
+                                Longest[i] = Math.Max(LongestRow[i], result.GetName(i).Length);
+                                Console.Write($" {result.GetName(i).PadRight(Longest[i])} |");
                             }
+
+                            Console.WriteLine();
+                            for (int i = 0; i < ColumnCount; i++)
+                            {
+                                Console.Write($" {"-".PadRight(Longest[i], '-')} +");
+                            }
+
                             await result.CloseAsync();
                             result = await res.ExecuteReaderAsync();
 
                             Console.WriteLine();
-                            for (int i = 0; i < ColumnCount; i++)
-                            {
-                                string SeparatingTheColumnWithLine = ColumnsName[i].ToString();
-                                Console.Write($" {SeparatingTheColumnWithLine.PadRight(Longest[i])} |");
-                            }
-
-                            var Num = new int[ColumnCount];
-                            string Lines = "-";
-                            Console.WriteLine();
-                            for (int i = 0; i < ColumnCount; i++)
-                            {
-                                Num[i] += Longest[i];
-                                Console.Write($" {Lines.PadRight(Num[i], '-')} +");
-                            }
-                            Console.WriteLine();
                             while (await result.ReadAsync())
                             {
                                 for (int i = 0; i < ColumnCount; i++)
                                 {
-                                    string SeparatingTheRowWithLine = result[i].ToString();
-                                    Console.Write($" {SeparatingTheRowWithLine.PadRight(Longest[i])} |");
+                                    Console.Write($" {result[i].ToString().PadRight(Longest[i])} |");
                                 }
                                 Console.WriteLine();
                             }
@@ -84,7 +76,10 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                         }
 
                         Console.WriteLine("\n\n");
-                        Console.Write("Total: "+TotalRows+ "\t\t\t\t\t\t\t\t" + (int)Math.Ceiling((double)offset / limit) + "/" + TotalRows / limit);
+                        Console.Write("Total: "+TotalRows+ "\t\t\t\t\t\t\t\t" + 
+                                      ((int)Math.Ceiling((double)offset / limit)) + "/" +
+                                      (TotalRows / limit));
+
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write($"\n\n\n\t\t\t\t\t\t\t\tback page <<-- LeftArrow\t||\tRightArrow-- >> next page");
                         Console.ForegroundColor= ConsoleColor.Red;
@@ -92,13 +87,17 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                         Console.ForegroundColor= ConsoleColor.Gray;
 
                         ConsoleKeyInfo key = Console.ReadKey(true);
+
                         if (key.Key == ConsoleKey.RightArrow)
                         {
                             offset += limit;
-                            if (offset > TotalRows) offset = 0;
+                            if (offset > TotalRows)
+                                offset = 0;
                         }
-                        else if (key.Key == ConsoleKey.LeftArrow) offset = Math.Max(0, offset - limit);
-                        else if (key.Key == ConsoleKey.DownArrow) exit = false;
+                        else if (key.Key == ConsoleKey.LeftArrow)
+                            offset = Math.Max(0, offset - limit);
+                        else if (key.Key == ConsoleKey.DownArrow)
+                            exit = false;
                     }
                     await connection.CloseAsync();
                 }

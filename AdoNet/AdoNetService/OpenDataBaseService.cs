@@ -24,19 +24,25 @@ namespace Mavzu.Ado_net.Ado_net_Servis
         {
             string ResultOpenConnectionString = "";
             bool OpenConnectionString = true;
+
             while (OpenConnectionString)
             {
                 try
                 {
                     string DatabaseCheck = "";
                     Console.Write("Server [localhost]:");
+
                     string LocalHost = Console.ReadLine();
                     Console.Write("Database [postgres]:");
+
                     string DataBase = Console.ReadLine();
                     DatabaseCheck = DataBase;
+
                     Console.Write("Port [5432]:");
                     string Port = Console.ReadLine();
-                    if (string.IsNullOrEmpty(Port)) Port = "5432";
+
+                    if (string.IsNullOrEmpty(Port))
+                        Port = "5432";
                     else
                     {
                         int portInt;
@@ -47,14 +53,18 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                         }
                         Port = Convert.ToString(portInt);
                     }
+
                     Console.Write("Username [postgres]:");
                     string User = Console.ReadLine();
+
                     Console.Write("Password:");
                     string Password = Program.ReadPassword();
+
                     if (string.IsNullOrEmpty(LocalHost)) LocalHost = "localhost";
                     if (string.IsNullOrEmpty(DataBase)) DatabaseCheck = "postgres";
                     if (string.IsNullOrEmpty(User)) User = "postgres";
                     string Usernamedefault = "postgres";
+
                     string NewConnectionString = $"Host={LocalHost};Database={Usernamedefault};Port={Port};Username={User};Password={Password};";
 
                     using (var connection = new NpgsqlConnection(NewConnectionString))

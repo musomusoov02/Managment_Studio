@@ -14,10 +14,12 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                     await connection.OpenAsync();
                     string TableName = "";
                     bool exit = true;
+
                     while (exit)
                     {
                         Console.Write("Table Name: ");
                         TableName = Console.ReadLine();
+
                         while (string.IsNullOrEmpty(TableName))
                         {
                             Console.WriteLine("Not Entered!!! ");
@@ -35,6 +37,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                         }
                     }
                     string Query = $@" CREATE TABLE {TableName} ();";
+
                     using (NpgsqlCommand command = connection.CreateCommand())
                     {
                         command.CommandText = Query;
@@ -62,6 +65,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                     await connection.OpenAsync();
                     List<string> list = new List<string>();
                     DataTable tables = await connection.GetSchemaAsync("Tables");
+
                     foreach (DataRow row in tables.Rows)
                     {
                         list.Add($"{row["Table_Name"]}");
@@ -90,6 +94,7 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                     string NewTableName = "";
                     Console.Write("Table New Name: ");
                     NewTableName = Console.ReadLine();
+
                     while (string.IsNullOrEmpty(NewTableName))
                     {
                         Console.WriteLine("Not Entered!!! ");
