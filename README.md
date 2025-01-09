@@ -13,11 +13,11 @@ Other IDEs
 How to Use
 To use the application, enter the following information:
 
-Host
-Database
-Port
-Username
-Password
+- Host
+- Database
+- Port
+- Username
+- Password
 Once the application is provided with the correct information, it will run and allow you to create SQL queries.
 
 Author
