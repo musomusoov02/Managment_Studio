@@ -23,5 +23,4 @@ Once the application is provided with the correct information, it will run and a
 
 Author
 Muhammad Musokhon — Student, created the project to learn ADO.NET.
-License
-[License information]
+
