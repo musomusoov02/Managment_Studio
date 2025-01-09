@@ -13,12 +13,10 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                 string ColumnName = string.Empty;
 
                 for (int i = 0; i < columnCount; i++)
-                {
-                    ColumnName += "\"";
-                    ColumnName += listColumn[i].Item1;
-                    ColumnName += "\"";
-                    if (i != columnCount - 1) ColumnName += ", ";
-                }
+                    ColumnName += $"\"{listColumn[i].Item1}\",";
+
+                ColumnName = ColumnName.Remove(ColumnName.Length - 1);
+
                 using (var connection = new NpgsqlConnection(Program.ConnectionString))
                 {
                     await connection.OpenAsync();
@@ -31,11 +29,10 @@ namespace Mavzu.Ado_net.Ado_net_Servis
                             Console.WriteLine($"\n({i+1}) Column name: {listColumn[i].Item1,-15}| Data type: {listColumn[i].Item2}");
                             Console.WriteLine(new string('-', 50) + "\n");
                             Console.Write("Enter a value: ");
-                            value += "'";
-                            value += Console.ReadLine();
-                            value += "'";
-                            if (i != columnCount - 1) value += ", ";
+                            value += $"'{Console.ReadLine()}',";
                         }
+                        value = value.Remove(value.Length - 1);
+
                         string query = $"INSERT INTO \"{TableName}\" ({ColumnName}) VALUES ({value});";
                         command.CommandText = query;
                         await command.ExecuteNonQueryAsync();
