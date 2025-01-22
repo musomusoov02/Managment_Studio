@@ -21,6 +21,3 @@ To use the application, enter the following information:
 
 Once the application is provided with the correct information, it will run and allow you to create SQL queries.
 
-Author
-Muhammad Musokhon — Student, created the project to learn ADO.NET.
-
